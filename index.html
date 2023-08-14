@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>File Upload</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+  <style>
+    .selected-file {
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      padding: 5px;
+      margin: 5px 0;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+    }
+    .selected-file span {
+      margin-right: 10px;
+    }
+    .remove-link {
+      color: #dc3545;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    .remove-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <h2 class="my-4 text-center">Upload Your Files</h2>
+        <form action="/upload" method="POST" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label for="fileInput" class="form-label">Select Files</label>
+            <input type="file" class="form-control" id="fileInput" name="fileInput" multiple>
+            <span id="fileCount" class="ms-2"></span>
+          </div>
+          <div id="selectedFiles" class="mb-3"></div>
+          <div class="mt-3">
+            <label for="archiveType" class="form-label">Select Archive Type:</label>
+            <select class="form-select" id="archiveType" name="archiveType">
+              <option value="zip">Zip</option>
+              <option value="rar">Rar</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+  <script>
+    const fileInput = document.getElementById("fileInput");
+    const fileCountDisplay = document.getElementById("fileCount");
+    const selectedFilesContainer = document.getElementById("selectedFiles");
+    fileInput.addEventListener("change", function(event) {
+      selectedFilesContainer.innerHTML = "";
+      for (const file of event.target.files) {
+        const fileWrapper = document.createElement("div");
+        fileWrapper.classList.add("selected-file");
+        const fileName = document.createElement("span");
+        fileName.textContent = file.name;
+        const removeLink = document.createElement("a");
+        removeLink.href = "#";
+        removeLink.textContent = "Remove";
+        removeLink.classList.add("remove-link");
+        removeLink.addEventListener("click", function() {
+          fileWrapper.remove();
+          updateFileCount();
+        });
+        fileWrapper.appendChild(fileName);
+        fileWrapper.appendChild(removeLink);
+        selectedFilesContainer.appendChild(fileWrapper);
+      }
+      updateFileCount();
+    });
+    function updateFileCount() {
+      const fileWrappers = selectedFilesContainer.getElementsByClassName("selected-file");
+      const count = fileWrappers.length;
+      fileCountDisplay.textContent = count === 0
+        ? ""
+        : `${count} file${count !== 1 ? 's' : ''} selected.`;
+    }
+  </script>
+</body>
+</html>
